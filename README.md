@@ -76,7 +76,7 @@ TimeWarden/
 │   └── main.py           # Точка входа
 ├── alembic/               # Миграции
 ├── agent/                 # Агент (отдельно)
-│   └── agent.py
+│   └── collector.py
 ├── .env
 ├── requirements.txt
 └── README.md
