@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    APP_NAME: str
+    APP_NAME: str = 'TimeWarden'
     DEBUG: bool = False
     DATABASE_URL: str = 'sqlite:///./timewarden.db'
 
