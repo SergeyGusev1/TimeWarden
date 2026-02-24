@@ -51,7 +51,7 @@ alembic upgrade head
 uvicorn app.main:app --reload
 ```
 
-#Агент
+# Агент
 ```bash
 # В отдельной папке или терминале
 cd agent  # или отдельный репозиторий
@@ -62,9 +62,9 @@ pip install psutil requests pywin32
 # Запустить агента
 python agent.py
 ```
-```bash
+
 📁 Структура проекта
-text
+```bash
 TimeWarden/
 ├── app/
 │   ├── api/              # Эндпоинты
