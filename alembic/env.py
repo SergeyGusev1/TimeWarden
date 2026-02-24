@@ -28,8 +28,8 @@ def run_migrations_offline():
 
 def run_migrations_online():
     # Создаём движок вручную, как в Wallet
-    connectable = create_engine(settings.DATABASE_URL)
-    
+    connectable = create_engine(settings.DATABASE_URL.replace('+aiosqlite', ''))
+
     with connectable.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():
