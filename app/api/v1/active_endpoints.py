@@ -10,7 +10,7 @@ from app.crud.activity import ActivityCRUD
 router = APIRouter()
 
 
-@router.post('/api/activity', response_model=ActivityResponse)
+@router.post('/activity', response_model=ActivityResponse)
 async def activity_from_agent(
     activity_data: ActivityCreate,
     session: AsyncSession = Depends(get_async_session)
@@ -19,7 +19,7 @@ async def activity_from_agent(
     return await ActivityService.create_activity(session, activity_data)
 
 
-@router.get('/api/activity/{activity_id}', response_model=ActivityResponse)
+@router.get('/activity/{activity_id}', response_model=ActivityResponse)
 async def activity_by_id(
     activity_id: int,
     session: AsyncSession = Depends(get_async_session)
@@ -28,7 +28,7 @@ async def activity_by_id(
     return await ActivityCRUD.get_by_id(session, activity_id)
 
 
-@router.get('/api/activity', response_model=ActivityList)
+@router.get('/activity', response_model=ActivityList)
 async def get_list_activity(
     session: AsyncSession = Depends(get_async_session),
     page: int = Query(1, ge=1, description='Номер страницы'),
