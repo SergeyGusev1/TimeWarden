@@ -1,40 +1,48 @@
-version: '3.8'
-
 services:
-  db:
+
+  postgres:
     image: postgres:15
-    container_name: timewarden_db
+    container_name: timewarden-postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: TimeWardenPostgre
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: timewarden
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
-  app:
-    build: .
-    container_name: timewarden_app
-    command: >
-      sh -c "alembic upgrade head &&
-             uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+  backend:
+    build: ./backend
+    container_name: timewarden-backend
     volumes:
-      - .:/app
+      - ./backend:/app/backend
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/TimeWardenPostgre
-      APP_NAME: TimeWarden
-      DEBUG: "True"
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/timewarden
+      - APP_NAME=TimeWarden
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
     depends_on:
-      db:
+      postgres:
         condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: timewarden-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
 
 volumes:
   postgres_data:

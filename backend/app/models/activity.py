@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Mapped, mapped_column
-from typing import Optional
 from datetime import datetime
 from app.core.database import Base
 from app.services.category_detector import AppCategory
