@@ -1,7 +1,6 @@
-import asyncio
 from telegram import Bot
 from telegram.error import TelegramError
-from datetime import datetime, timedelta
+from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import settings
 from app.crud.stats import StatsCRUD
