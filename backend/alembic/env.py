@@ -1,3 +1,5 @@
+# flake8: noqa
+# type: ignore
 from logging.config import fileConfig
 from sqlalchemy import pool, create_engine
 from alembic import context
@@ -11,13 +13,14 @@ from app.core.database import Base
 from app.models import Activity # noqa
 
 config = context.config
-# Убираем +asyncpg для миграций
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL.replace('+asyncpg', ''))
+config.set_main_option(
+    "sqlalchemy.url", settings.DATABASE_URL.replace('+asyncpg', ''))
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
+
 
 def run_migrations_offline() -> None:
     url = config.get_main_option("sqlalchemy.url")
@@ -29,6 +32,7 @@ def run_migrations_offline() -> None:
     )
     with context.begin_transaction():
         context.run_migrations()
+
 
 def run_migrations_online() -> None:
     """Синхронная версия для миграций"""
@@ -43,6 +47,7 @@ def run_migrations_online() -> None:
         )
         with context.begin_transaction():
             context.run_migrations()
+
 
 if context.is_offline_mode():
     run_migrations_offline()

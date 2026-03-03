@@ -1,6 +1,5 @@
 import asyncio
 from datetime import datetime, time, timedelta
-from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import AsyncSessionLocal
 from app.services.telegram_service import TelegramNotifier
 
@@ -17,7 +16,8 @@ class Scheduler:
             target = datetime.combine(now.date(), time(21, 0))
 
             if now > target:
-                target = datetime.combine(now.date() + timedelta(days=1), time(21, 0))
+                target = datetime.combine(
+                    now.date() + timedelta(days=1), time(21, 0))
 
             wait_seconds = (target - now).total_seconds()
             await asyncio.sleep(wait_seconds)

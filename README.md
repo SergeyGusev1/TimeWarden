@@ -1,4 +1,8 @@
 # TimeWarden ⏱️
+[![Python](https://img.shields.io/badge/python-3.12-blue)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.129-green)](https://fastapi.tiangolo.com/)
+[![Docker](https://img.shields.io/badge/docker-ready-blue)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 **Pet-проект** — асинхронный трекер времени, который автоматически определяет, на что вы тратите время за компьютером. Проект находится в активной разработке.
 
@@ -27,29 +31,25 @@ git clone https://github.com/yourusername/TimeWarden.git
 cd TimeWarden
 ```
 
+### Быстрый старт
 ```bash
-# Создать виртуальное окружение
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
-```
-```bash
-# Установить зависимости
-pip install -r requirements.txt
+# Клонировать репозиторий
+git clone https://github.com/SergeyGusev1/TimeWarden.git
+cd TimeWarden
 ```
 ```bash
 # Создать .env файл
-echo "DATABASE_URL=sqlite+aiosqlite:///./timewarden.db" > .env
-echo "APP_NAME=TimeWarden" >> .env
+cp .env.example .env
+# Отредактировать .env (добавить токены Telegram)
 ```
 ```bash
-# Применить миграции
-alembic upgrade head
+# Запустить все сервисы
+docker-compose up --build
 ```
-```bash
-# Запустить сервер
-uvicorn app.main:app --reload
-```
+# Сервисы будут доступны:
+# - Frontend: http://localhost:3000
+# - Backend API: http://localhost:8000/docs
+# - PostgreSQL: localhost:5432
 
 # Агент
 ```bash
@@ -57,7 +57,7 @@ uvicorn app.main:app --reload
 cd agent  # или отдельный репозиторий
 
 # Установить зависимости
-pip install psutil requests pywin32
+pip install requirements.txt
 
 # Запустить агента
 python agent.py
@@ -66,20 +66,32 @@ python agent.py
 📁 Структура проекта
 ```bash
 TimeWarden/
-├── app/
-│   ├── api/              # Эндпоинты
-│   ├── core/             # Конфиги, база
-│   ├── crud/             # Операции с БД
-│   ├── models/           # SQLAlchemy модели
-│   ├── schemas/          # Pydantic схемы
-│   ├── services/         # Бизнес-логика
-│   └── main.py           # Точка входа
-├── alembic/               # Миграции
-├── agent/                 # Агент (отдельно)
+├── backend/                    # Весь бэкенд
+│   ├── app/                    # FastAPI приложение
+│   │   ├── api/
+│   │   ├── core/
+│   │   ├── crud/
+│   │   ├── models/
+│   │   ├── schemas/
+│   │   ├── services/
+│   │   └── main.py
+│   ├── alembic/                # Миграции
+│   ├── requirements.txt
+│   └── Dockerfile
+│
+├── frontend/                   # Весь фронтенд
+│   ├── public/
+│   ├── src/
+│   ├── package.json
+│   ├── Dockerfile
+│   └── nginx.conf
+│
+├── agent/                      # Агент
 │   └── collector.py
-├── .env
-├── requirements.txt
-└── README.md
+│
+├── .gitignore
+├── README.md
+└── docker-compose.yml
 ```
 # 🎯 Функциональность
 
@@ -140,11 +152,26 @@ GET /api/v1/activities?page=1&size=10
 
 При ошибках сохраняет данные в буфере
 
+## 🤖 **Telegram-бот**
+
+TimeWarden может присылать уведомления в Telegram:
+
+### Настройка
+1. Напиши @BotFather в Telegram, создай нового бота
+2. Получи токен и добавь в `.env`:
+TELEGRAM_BOT_TOKEN=1234567890:ABCdefGHIjklMNOpqrsTUVwxyz
+TELEGRAM_CHAT_ID=123456789
+3. Найди @getmyid_bot, чтобы узнать свой chat_id
+
+### Что умеет бот
+- 📊 Ежедневный отчёт в 21:00
+- ⚠️ Предупреждения о чрезмерном wasted-времени
+- 🎉 Поздравления с достижением целей
+
+
 # 🤝 Вклад в проект
 Проект создан в образовательных целях и для портфолио. Любые идеи и предложения приветствуются!
 
-# 📝 Лицензия
-MIT
 
 Статус: В активной разработке 🚧
 
