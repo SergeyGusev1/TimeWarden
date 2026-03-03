@@ -1,9 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, and_
+from sqlalchemy import select, func
 from datetime import datetime, date, timedelta
 from typing import Optional
 from app.models.activity import Activity
-from app.services.category_detector import AppCategory
 
 
 class StatsCRUD:
@@ -22,13 +21,13 @@ class StatsCRUD:
         if start_date:
             query = query.where(Activity.start_time >= start_date)
         if end_date:
-            query = query.where(Activity.end_time <= end_date + timedelta(days=1))
+            query = query.where(
+                Activity.end_time <= end_date + timedelta(days=1))
 
         query = query.group_by(Activity.category)
 
         result = await session.execute(query)
         return list(result.all())
-
 
     @staticmethod
     async def get_daily_stats(
@@ -48,7 +47,6 @@ class StatsCRUD:
         ).order_by('day')
         result = await session.execute(query)
         return list(result.all())
-
 
     @staticmethod
     async def get_top_apps(

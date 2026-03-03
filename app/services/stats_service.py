@@ -1,9 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, and_
 from datetime import date, datetime, timedelta
 from typing import Optional, Dict
-from app.models.activity import Activity
-from app.services.category_detector import AppCategory
 from app.crud.stats import StatsCRUD
 
 
