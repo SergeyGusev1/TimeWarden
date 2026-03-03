@@ -1,11 +1,25 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from contextlib import asynccontextmanager
+import asyncio
 from app.core.config import settings
-from app.api.v1 import router
+from app.api.v1 import router as v1_router
+from app.services.scheduler import Scheduler
+
+scheduler = Scheduler()
 
 
-app = FastAPI(title=settings.APP_NAME)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    asyncio.create_task(scheduler.start())
+    yield
+    scheduler.stop()
+
+app = FastAPI(
+    title=settings.APP_NAME,
+    lifespan=lifespan
+)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
@@ -14,9 +28,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router)
+app.include_router(v1_router)
 
 
-@app.get('/')
-def root():
-    return {'message': 'TimeWarden is alive'}
+@app.get("/")
+async def root():
+    return {"message": "TimeWarden is alive"}

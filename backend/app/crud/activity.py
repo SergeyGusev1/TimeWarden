@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from app.models.activity import Activity
+from app.schemas.activity import ActivityCreate
 
 
 class ActivityCRUD:
