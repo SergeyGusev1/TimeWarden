@@ -1,37 +1,40 @@
-version: '3.8'
-
 services:
-  # База данных (опционально, если хочешь PostgreSQL)
-  # postgres:
-  #   image: postgres:15
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #     POSTGRES_DB: timewarden
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
 
-  # Бэкенд (FastAPI)
+  postgres:
+    image: postgres:15
+    container_name: timewarden-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: timewarden
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
   backend:
     build: ./backend
     container_name: timewarden-backend
     volumes:
-      - ./backend:/app
-      - ./data:/app/data  # для SQLite
+      - ./backend:/app/backend
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=sqlite+aiosqlite:///./data/timewarden.db
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/timewarden
       - APP_NAME=TimeWarden
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
-    # depends_on:
-    #   - postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
 
-  # Фронтенд (React)
   frontend:
     build: ./frontend
     container_name: timewarden-frontend
@@ -40,21 +43,6 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
-
-  # Агент (нужен отдельный образ)
-  agent:
-    build: ./agent
-    container_name: timewarden-agent
-    volumes:
-      - ./agent:/app
-    environment:
-      - SERVER_URL=http://backend:8000
-    depends_on:
-      - backend
-    restart: unless-stopped
-    # Для Windows нужно особое конфигурирование
-    # stdin_open: true
-    # tty: true
 
 volumes:
   postgres_data:
