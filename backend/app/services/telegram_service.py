@@ -1,3 +1,4 @@
+import logging
 from telegram import Bot
 from telegram.error import TelegramError
 from datetime import datetime
@@ -6,14 +7,19 @@ from app.core.config import settings
 from app.crud.stats import StatsCRUD
 from app.services.category_detector import AppCategory
 
+logger = logging.getLogger(__name__)
+
 
 class TelegramNotifier:
     def __init__(self):
-        self.bot = Bot(token=settings.TELEGRAM_BOT_TOKEN)
+        self.enabled = bool(settings.TELEGRAM_BOT_TOKEN and settings.TELEGRAM_CHAT_ID)
+        self.bot = Bot(token=settings.TELEGRAM_BOT_TOKEN) if self.enabled else None
         self.chat_id = settings.TELEGRAM_CHAT_ID
 
     async def send_message(self, text: str) -> bool:
         """Отправить сообщение"""
+        if not self.enabled:
+            return False
         try:
             await self.bot.send_message(
                 chat_id=self.chat_id,
@@ -22,7 +28,7 @@ class TelegramNotifier:
             )
             return True
         except TelegramError as e:
-            print(f"Ошибка отправки в Telegram: {e}")
+            logger.error("Ошибка отправки в Telegram: %s", e)
             return False
 
     async def send_daily_report(self, session: AsyncSession):

@@ -32,10 +32,11 @@ class ActivityService:
     @staticmethod
     async def get_list_activity(
         session: AsyncSession,
-        skip: int = 0,
-        limit: int = 100,
+        page: int = 1,
+        size: int = 10,
     ) -> tuple[list[Activity], int]:
-        """Получить список аксьтивностей с пагинацией. и их общее количество"""
-        activities = await ActivityCRUD.get_list(session, skip, limit)
+        """Получить список активностей с пагинацией и их общее количество"""
+        skip = (page - 1) * size
+        activities = await ActivityCRUD.get_list(session, skip, size)
         total = await ActivityCRUD.count(session)
         return activities, total

@@ -22,7 +22,7 @@ services:
     build: ./backend
     container_name: timewarden-backend
     volumes:
-      - ./backend:/app/backend
+      - ./backend:/backend
     ports:
       - "8000:8000"
     environment:

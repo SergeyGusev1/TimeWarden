@@ -36,15 +36,16 @@ class StatsCRUD:
         end_date: datetime
     ) -> list:
         """Получить сырые данные по дням"""
+        day_label = func.date(Activity.start_time).label('day')
         query = select(
-            func.date(Activity.start_time).label('day'),
+            day_label,
             Activity.category,
             func.sum(Activity.duration_seconds).label('total_seconds')
         ).where(
             Activity.start_time >= start_date
         ).group_by(
-            'day', Activity.category
-        ).order_by('day')
+            day_label, Activity.category
+        ).order_by(day_label)
         result = await session.execute(query)
         return list(result.all())
 

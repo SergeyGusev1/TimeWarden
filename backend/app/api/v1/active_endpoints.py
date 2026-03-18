@@ -34,7 +34,7 @@ async def get_list_activity(
     page: int = Query(1, ge=1, description='Номер страницы'),
     size: int = Query(10, ge=1, description='Размер страницы')
 ):
-    """Получает список актитвностей с пагинацией"""
+    """Получает список активностей с пагинацией"""
     activities, total = await ActivityService.get_list_activity(
         session, page, size)
 
