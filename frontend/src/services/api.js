@@ -14,6 +14,11 @@ export const api = {
   getCategoryStats: (startDate, endDate) =>
     axios.get(`${API_BASE}/stats/categories`, { params: { start_date: startDate, end_date: endDate } }),
 
+  getTodayStats: () => {
+    const today = new Date().toISOString().split('T')[0];
+    return axios.get(`${API_BASE}/stats/categories`, { params: { start_date: today, end_date: today } });
+  },
+
   getDailyStats: (days = 7) =>
     axios.get(`${API_BASE}/stats/daily`, { params: { days } }),
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Paper, Skeleton, Box } from '@mui/material';
+import { Grid, Paper, Skeleton } from '@mui/material';
 
 function CardSkeleton({ height = 120 }) {
   return (

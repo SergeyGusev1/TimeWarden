@@ -123,7 +123,7 @@ class SimpleAgent:
                     json=activity,
                     timeout=5
                 )
-                if response.status_code == 201:
+                if response.status_code in (200, 201):
                     successful.append(activity)
                 else:
                     failed.append(activity)
