@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Container, Grid, AppBar, Toolbar, Typography, Button,
   Alert, Chip, ToggleButton, ToggleButtonGroup,
@@ -11,6 +11,7 @@ import DailyBarChart from './components/DailyBarChart';
 import TopAppsList from './components/TopAppsList';
 import StatsCards from './components/StatsCards';
 import SkeletonDashboard from './components/SkeletonDashboard';
+import TodaySection from './components/TodaySection';
 
 const theme = createTheme({
   palette: {
@@ -75,6 +76,7 @@ function App() {
   const [categoryStats, setCategoryStats] = useState(null);
   const [dailyStats, setDailyStats] = useState(null);
   const [topApps, setTopApps] = useState(null);
+  const [todayStats, setTodayStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
@@ -85,14 +87,16 @@ function App() {
     if (isManual) setRefreshing(true);
     setError(null);
     try {
-      const [categories, daily, top] = await Promise.all([
+      const [categories, daily, top, today] = await Promise.all([
         api.getCategoryStats(),
         api.getDailyStats(selectedDays),
         api.getTopApps(10),
+        api.getTodayStats(),
       ]);
       setCategoryStats(categories.data);
       setDailyStats(daily.data);
       setTopApps(top.data);
+      setTodayStats(today.data);
       setLastUpdated(new Date());
     } catch {
       setError('Не удалось загрузить данные. Убедитесь, что бэкенд запущен на порту 8000.');
@@ -173,6 +177,10 @@ function App() {
           <SkeletonDashboard />
         ) : (
           <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <TodaySection data={todayStats} />
+            </Grid>
+
             <Grid item xs={12}>
               <StatsCards categoryStats={categoryStats} topApps={topApps} days={days} />
             </Grid>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Paper, Typography, Box } from '@mui/material';
+import { Grid, Paper, Typography } from '@mui/material';
 
 const CATEGORY_LABELS = {
   productive: 'Продуктивно',
