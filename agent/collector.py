@@ -1,3 +1,6 @@
+import sys
+sys.stdout.reconfigure(encoding='utf-8')
+
 import ctypes
 from ctypes import wintypes
 import psutil
